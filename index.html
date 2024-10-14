@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hajo</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <style>
+        table, tr, th, td{
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 10px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body ng-controller ="myCtrl">
+    <!--Keresés-->
+    <form action="" method="get">
+        <input type="search" name="kifejezes" id="kifejezes" ng-model="searchQuery" placeholder="Keresés...">
+    </form>
+
+    <table >
+        <thead>
+            <th ng-click="sortBy('azon')">Azonosító</th>
+            <th ng-click="sortBy('jarat')">Járat</th>
+            <th ng-click="sortBy('honnan')">Honnan</th>
+            <th ng-click="sortBy('hova')">Hova</th>
+            <th ng-click="sortBy('indul')">Indul</th>
+            <th ng-click="sortBy('erkezik')">Érkezik</th>
+        </thead>
+        <tbody>
+            <tr ng-repeat="menet in menetrend | orderBy:orderByField:reverseSort | filter:searchQuery">
+                <td>{{menet.azon}}</td>
+                <td>{{menet.jarat}}</td>
+                <td>{{menet.honnan}}</td>
+                <td>{{menet.hova}}</td>
+                <td>{{menet.indul}}</td>
+                <td>{{menet.erkezik}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        let app = angular.module("myApp", []);
+        app.controller('myCtrl', function($scope, $http){
+            $http.get('m.json').then(function(response){
+                $scope.menetrend = response.data;
+                console.log($scope.menetrend);
+            })
+            $scope.orderByField = 'erkezik';
+            $scope.reverseSort = false;
+            $scope.sortBy = function(field){
+                $scope.reverseSort = ($scope.orderByField === field) ? !$scope.reverseSort : false;
+                $scope.orderByField = field;
+            }
+        })
+    </script>
+</body>
+</html>
